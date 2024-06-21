@@ -6,7 +6,7 @@ from sys import getsizeof
 import sys
 import io
 from Nimapydoc import YourPersonalVersion
-main__version__ = YourPersonalVersion(2,1,1)
+main__version__ = YourPersonalVersion(2,1,2)
 
 ######################################################
 """             code editor scope starts           """
@@ -724,6 +724,7 @@ def main_setup() -> None:
     for setup page
     """
     setup_window = CTk() # create setup window
+    setup_window.title("main menu")
     setup_window.geometry(f"400x300+{0}+{0}")
 
     def start_codeEditor_command() -> None: 
