@@ -6,7 +6,7 @@ from sys import getsizeof
 import sys
 import io
 from Nimapydoc import YourPersonalVersion
-main__version__ = YourPersonalVersion(1,9,1)
+main__version__ = YourPersonalVersion(2,1,1)
 
 ######################################################
 """             code editor scope starts           """
@@ -75,6 +75,22 @@ class MainWindow(CTk):
             self.destroy()
             showinfo(title="exiting...",message="exited secssusfully")
 
+        def back_to_setup_for_codeEditor_command():
+            self.output_textbox.delete(0.0,END)
+            self.output_textbox.after(100,lambda: self.output_textbox.insert(0.0,text="wait"))
+            self.output_textbox.after(1100,lambda: self.output_textbox.insert(END,text="."))
+            self.output_textbox.after(2100,lambda: self.output_textbox.insert(END,text="."))
+            self.output_textbox.after(3100,lambda: self.output_textbox.insert(END,text="."))
+            self.output_textbox.after(4000,close_codeEditor_for_setup)
+
+        def close_codeEditor_for_setup():
+            try:
+                self.destroy()
+            except Exception as e:
+                showerror(title=type(e).__name__,message=e)
+            finally:
+                main_setup()
+
         self.title("Nima python code editor")
         self.geometry(f"600x500+{int(self.winfo_screenwidth()/2) - 200}+{int(self.winfo_screenheight()/2) - 250}")
         self.minsize(width=550,height=490)
@@ -85,6 +101,7 @@ class MainWindow(CTk):
         self.grid_rowconfigure(1, weight=1)
         self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(3, weight=1)
+
 
         self.textbox1 = CodeEditor(
             self,
@@ -117,6 +134,8 @@ class MainWindow(CTk):
 
         self.exit_btn = CTkButton(self, text="Exit the Program", command=exit_command)
         self.exit_btn.grid(row=3, column=0, columnspan=2, padx=10, pady=(5,0),sticky="n")
+        self.back_to_setup_for_codeEditor = CTkButton(self,text="back to main menu",command=back_to_setup_for_codeEditor_command)
+        self.back_to_setup_for_codeEditor.grid(row=3,column=0,columnspan=2,padx=8,sticky="w")
 
 
 def main_codeEditor():
@@ -728,7 +747,7 @@ def main_setup() -> None:
             window_codeEditor = MainWindow()
             window_codeEditor.mainloop()
         except Exception as e:
-            showerror(title=f"can't open code editor !! because of {e}")
+            showerror(title=type(e).__name__,message=e)
 
     def start_NIMA_GUI_command() -> None:
         """fuction for starting NIMA_GUI"""
@@ -751,7 +770,7 @@ def main_setup() -> None:
             window_NIMA_GUI = Window()
             window_NIMA_GUI.mainloop()
         except Exception as e:
-            showerror(title=f"can't open code editor !! because of {e}")
+            showerror(title=type(e).__name__,message=e)
     
     start_codeEditor = CTkButton(setup_window,text="start python code editor",width=BTN_SIZE,command=start_codeEditor_command)
     start_codeEditor.pack(pady=(5,0))
