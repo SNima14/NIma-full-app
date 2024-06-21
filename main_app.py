@@ -1,5 +1,5 @@
-import CodeEditor
-import NIMA_GUI
+from CodeEditor import *
+from NIMA_GUI import *
 from customtkinter import *
 from tkinter.messagebox import showerror
 
@@ -32,7 +32,7 @@ def main_setup() -> None:
     def main_codeEditor() -> None:
         """start_codeEditor_command helper function """
         try:
-            window_codeEditor = CodeEditor.MainWindow()
+            window_codeEditor = MainWindow()
             window_codeEditor.mainloop()
         except Exception as e:
             showerror(title=f"can't open code editor !! because of {e}")
@@ -55,7 +55,7 @@ def main_setup() -> None:
     def main_NIMA_GUI() -> None:
         """start_NIMA_GUI_command helper function """
         try:
-            window_NIMA_GUI = NIMA_GUI.Window()
+            window_NIMA_GUI = Window()
             window_NIMA_GUI.mainloop()
         except Exception as e:
             showerror(title=f"can't open code editor !! because of {e}")
