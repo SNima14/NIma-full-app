@@ -6,7 +6,7 @@ from sys import getsizeof
 import sys
 import io
 from Nimapydoc import YourPersonalVersion
-main__version__ = YourPersonalVersion(3,1,1)
+main__version__ = YourPersonalVersion(3,1,2)
 
 import pandas as pd
 
