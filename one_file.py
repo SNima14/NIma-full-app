@@ -6,13 +6,13 @@ from sys import getsizeof
 import sys
 import io
 from Nimapydoc import YourPersonalVersion
-main__version__ = YourPersonalVersion(3,1,2)
+main__version__ = YourPersonalVersion(3,1,3)
 
 import pandas as pd
 
-df=pd.read_csv("setting.csv")
-print(df.head(2))
 try:
+    df=pd.read_csv("setting.csv")
+    print(df.head(2))
     set_appearance_mode(df.at[0,"user theme"])
 except:
     set_appearance_mode("Dark")
