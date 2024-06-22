@@ -1,18 +1,15 @@
 from customtkinter import * #TODO : It is improting all this things too
 from tkinter.messagebox import showerror,showinfo
 from typing import Any,Tuple                        
-from Nimapydoc import MyDecorator as decorator
-from sys import getsizeof
 import sys
 import io
-from Nimapydoc import YourPersonalVersion
-main__version__ = YourPersonalVersion(3,1,3)
+
+__version__ = "3.2.1"
 
 import pandas as pd
 
 try:
     df=pd.read_csv("setting.csv")
-    print(df.head(2))
     set_appearance_mode(df.at[0,"user theme"])
 except:
     set_appearance_mode("Dark")
@@ -61,7 +58,6 @@ class MainWindow(CTk):
     def __init__(self, fg_color: str | Tuple[str, str] | None = None, **kwargs):
         super().__init__(fg_color, **kwargs)
 
-        @decorator.timer
         def execute():
             execute_text = self.textbox1.get("1.0", END)
             # Redirect stdout and stderr to a StringIO object
@@ -149,7 +145,6 @@ class MainWindow(CTk):
 
 def main_codeEditor():
     wind = MainWindow()
-    print(getsizeof(wind))
 
     wind.mainloop()
 
