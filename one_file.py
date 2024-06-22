@@ -1,16 +1,16 @@
-from customtkinter import * #TODO : It is improting all this things too
-from tkinter.messagebox import showerror,showinfo
-from typing import Any,Tuple                        
+from customtkinter import *  # TODO : It is improting all this things too
+from tkinter.messagebox import showerror, showinfo
+from typing import Any, Tuple
 import sys
 import io
 
-__version__ = "3.2.1"
+__version__ = "3.2.2"
 
 import pandas as pd
 
 try:
-    df=pd.read_csv("setting.csv")
-    set_appearance_mode(df.at[0,"user theme"])
+    df = pd.read_csv("setting.csv")
+    set_appearance_mode(df.at[0, "user theme"])
 except:
     set_appearance_mode("Dark")
 
@@ -18,13 +18,13 @@ except:
 """             code editor scope starts           """
 ######################################################
 class CodeEditor(CTkTextbox):
-    def __init__(self, master=None, **kwargs):
+    def __init__(self, master=None, **kwargs) -> None:
         super().__init__(master, **kwargs)
         self.bind("<Return>", self.auto_indent)
         self.bind("<Tab>", self.indent)
         self.bind("<Shift-Tab>", self.unindent)
 
-    def auto_indent(self, event=None):
+    def auto_indent(self, event=None) -> None:
         """
         Automatically indents the next line based on the current line's indentation.
         """
@@ -37,14 +37,14 @@ class CodeEditor(CTkTextbox):
         # Prevent default behavior
         return "break"
 
-    def indent(self, event=None):
+    def indent(self, event=None) -> None:
         """
         Inserts a tab character or spaces at the cursor position.
         """
         self.insert("insert", " " * 4)  # Using 4 spaces for a tab
         return "break"  # Prevent default behavior
 
-    def unindent(self, event=None):
+    def unindent(self, event=None) -> None:
         """
         Removes an indentation level.
         """
@@ -55,10 +55,10 @@ class CodeEditor(CTkTextbox):
 
 
 class MainWindow(CTk):
-    def __init__(self, fg_color: str | Tuple[str, str] | None = None, **kwargs):
+    def __init__(self, fg_color: str | Tuple[str, str] | None = None, **kwargs) -> None:
         super().__init__(fg_color, **kwargs)
 
-        def execute():
+        def execute() -> None:
             execute_text = self.textbox1.get("1.0", END)
             # Redirect stdout and stderr to a StringIO object
             old_stdout = sys.stdout
@@ -68,7 +68,7 @@ class MainWindow(CTk):
             try:
                 exec(execute_text)
             except Exception as e:
-                showerror(title=type(e).__name__,message=e)
+                showerror(title=type(e).__name__, message=e)
             # Reset stdout and stderr
             sys.stdout = old_stdout
             sys.stderr = old_stderr
@@ -76,29 +76,39 @@ class MainWindow(CTk):
             self.output_textbox.delete("1.0", END)
             self.output_textbox.insert(END, mystdout.getvalue() + mystderr.getvalue())
 
-        def exit_command():
+        def exit_command() -> None:
             self.destroy()
-            showinfo(title="exiting...",message="exited secssusfully")
+            showinfo(title="exiting...", message="exited secssusfully")
 
-        def back_to_setup_for_codeEditor_command():
-            self.output_textbox.delete(0.0,END)
-            self.output_textbox.after(100,lambda: self.output_textbox.insert(0.0,text="wait"))
-            self.output_textbox.after(1100,lambda: self.output_textbox.insert(END,text="."))
-            self.output_textbox.after(2100,lambda: self.output_textbox.insert(END,text="."))
-            self.output_textbox.after(3100,lambda: self.output_textbox.insert(END,text="."))
-            self.output_textbox.after(4000,close_codeEditor_for_setup)
+        def back_to_setup_for_codeEditor_command() -> None:
+            self.output_textbox.delete(0.0, END)
+            self.output_textbox.after(
+                100, lambda: self.output_textbox.insert(0.0, text="wait")
+            )
+            self.output_textbox.after(
+                1100, lambda: self.output_textbox.insert(END, text=".")
+            )
+            self.output_textbox.after(
+                2100, lambda: self.output_textbox.insert(END, text=".")
+            )
+            self.output_textbox.after(
+                3100, lambda: self.output_textbox.insert(END, text=".")
+            )
+            self.output_textbox.after(4000, close_codeEditor_for_setup)
 
-        def close_codeEditor_for_setup():
+        def close_codeEditor_for_setup() -> None:
             try:
                 self.destroy()
             except Exception as e:
-                showerror(title=type(e).__name__,message=e)
+                showerror(title=type(e).__name__, message=e)
             finally:
                 main_setup()
 
         self.title("Nima python code editor")
-        self.geometry(f"600x500+{int(self.winfo_screenwidth()/2) - 200}+{int(self.winfo_screenheight()/2) - 250}")
-        self.minsize(width=550,height=490)
+        self.geometry(
+            f"600x500+{int(self.winfo_screenwidth()/2) - 200}+{int(self.winfo_screenheight()/2) - 250}"
+        )
+        self.minsize(width=550, height=490)
 
         # Configure the grid layout
         self.grid_columnconfigure(0, weight=1)
@@ -107,7 +117,6 @@ class MainWindow(CTk):
         self.grid_rowconfigure(2, weight=1)
         self.grid_rowconfigure(3, weight=1)
 
-
         self.textbox1 = CodeEditor(
             self,
             width=450,
@@ -115,16 +124,18 @@ class MainWindow(CTk):
             corner_radius=2,
             activate_scrollbars=True,
             wrap="word",
-            font=CTkFont(family="Fira Code",size=13)
+            font=CTkFont(family="Fira Code", size=13),
         )
         self.textbox1.grid(row=0, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
 
         self.btn1 = CTkButton(
             self, width=140, height=28, text="Execute Code", command=execute
         )
-        self.btn1.grid(row=1, column=0, columnspan=2, padx=10, pady=(5,0),sticky="n")
-        self.nimalabel=CTkLabel(self,text="Autor: Nima Homam!",font=CTkFont(family="Fira Code",size=15))
-        self.nimalabel.grid(row=1,column=0,columnspan=2,padx=8,sticky="w")
+        self.btn1.grid(row=1, column=0, columnspan=2, padx=10, pady=(5, 0), sticky="n")
+        self.nimalabel = CTkLabel(
+            self, text="Autor: Nima Homam!", font=CTkFont(family="Fira Code", size=15)
+        )
+        self.nimalabel.grid(row=1, column=0, columnspan=2, padx=8, sticky="w")
 
         self.output_textbox = CTkTextbox(
             self,
@@ -135,19 +146,20 @@ class MainWindow(CTk):
             wrap="word",
             state="normal",
         )
-        self.output_textbox.grid(row=2, column=0, columnspan=2, padx=5, pady=5, sticky="nsew")
+        self.output_textbox.grid(
+            row=2, column=0, columnspan=2, padx=5, pady=5, sticky="nsew"
+        )
 
         self.exit_btn = CTkButton(self, text="Exit the Program", command=exit_command)
-        self.exit_btn.grid(row=3, column=0, columnspan=2, padx=10, pady=(5,0),sticky="n")
-        self.back_to_setup_for_codeEditor = CTkButton(self,text="back to main menu",command=back_to_setup_for_codeEditor_command)
-        self.back_to_setup_for_codeEditor.grid(row=3,column=0,columnspan=2,padx=8,sticky="w")
-
-
-def main_codeEditor():
-    wind = MainWindow()
-
-    wind.mainloop()
-
+        self.exit_btn.grid(
+            row=3, column=0, columnspan=2, padx=10, pady=(5, 0), sticky="n"
+        )
+        self.back_to_setup_for_codeEditor = CTkButton(
+            self, text="back to main menu", command=back_to_setup_for_codeEditor_command
+        )
+        self.back_to_setup_for_codeEditor.grid(
+            row=3, column=0, columnspan=2, padx=8, sticky="w"
+        )
 ######################################################
 """              code editor scope ends            """
 ######################################################
@@ -157,7 +169,6 @@ def main_codeEditor():
 ######################################################
 """             NIMA_GUI scope starts              """
 ######################################################
-
 python_text = """Python is a popular high-level programming language known for its simplicity and readability. It was created by Guido van Rossum and first released in 1991. Python emphasizes code readability and simplicity, making it an excellent choice for beginners and experienced programmers alike.
 
 Why Python?
@@ -215,7 +226,7 @@ class Lastbar(CTkFrame):
         background_corner_colors: Tuple[str | Tuple[str, str]] | None = None,
         overwrite_preferred_drawing_method: str | None = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(
             master,
             width,
@@ -230,12 +241,12 @@ class Lastbar(CTkFrame):
             **kwargs,
         )
 
-        def gender_comand():
+        def gender_comand() -> None:
             text = self.state_var_gender_radio.get()
             self.gender_label.configure(text=text)
             pass
 
-        def checkbox_comand():
+        def checkbox_comand() -> None:
             if self.checkbox1.get() == "nima" and self.checkbox2.get() == "hamed":
                 self.wellcome_label.configure(text="wellcome nima and hamed")
             elif self.checkbox1.get() == "nima" and self.checkbox2.get() == "nothing":
@@ -247,11 +258,11 @@ class Lastbar(CTkFrame):
             ):
                 self.wellcome_label.configure(text="????!!!!")
 
-        def mod_switch_comand():
+        def mod_switch_comand() -> None:
             text = self.mod_switch.get()
             self.mod_switch.configure(text=text)
 
-        def weird_comand():
+        def weird_comand() -> None:
             weird = CTk()
             weird.geometry("200x200")
             weird.title("weird")
@@ -389,7 +400,7 @@ class Midbar(CTkFrame):
         background_corner_colors: Tuple[str | Tuple[str, str]] | None = None,
         overwrite_preferred_drawing_method: str | None = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(
             master,
             width,
@@ -404,7 +415,7 @@ class Midbar(CTkFrame):
             **kwargs,
         )
 
-        def languages_combobox_comand(choice):
+        def languages_combobox_comand(choice) -> None:
             if choice == "java":
                 self.textbox.delete(0.0, END)
                 self.textbox.insert(0.0, text=java_text)
@@ -425,10 +436,10 @@ class Midbar(CTkFrame):
                 self.textbox.delete(0.0, END)
                 self.textbox.insert(0.0, text=python_text)
 
-        def delete_btn_comand():
+        def delete_btn_comand() -> None:
             self.textbox.delete(0.0, END)
 
-        def submit_btn_comand():
+        def submit_btn_comand() -> None:
             text = self.entry.get()
 
             try:
@@ -444,23 +455,22 @@ class Midbar(CTkFrame):
                 self.state_slider_var2.set(value=text)
                 self.state_slider_var3.set(value=text)
 
-        def back_to_setup_comand():
+        def back_to_setup_comand() -> None:
 
-            self.textbox.delete(0.0,END)
-            self.textbox.after(100,lambda:self.textbox.insert(0.0,text="wait"))
-            self.textbox.after(1100,lambda:self.textbox.insert(END,text="."))
-            self.textbox.after(2100,lambda:self.textbox.insert(END,text="."))
-            self.textbox.after(3100,lambda:self.textbox.insert(END,text="."))
-            self.textbox.after(4000,close_NIMA_GUI_for_setup)
+            self.textbox.delete(0.0, END)
+            self.textbox.after(100, lambda: self.textbox.insert(0.0, text="wait"))
+            self.textbox.after(1100, lambda: self.textbox.insert(END, text="."))
+            self.textbox.after(2100, lambda: self.textbox.insert(END, text="."))
+            self.textbox.after(3100, lambda: self.textbox.insert(END, text="."))
+            self.textbox.after(4000, close_NIMA_GUI_for_setup)
 
-        def close_NIMA_GUI_for_setup():
+        def close_NIMA_GUI_for_setup() -> None:
             try:
                 self.master.destroy()
             except Exception as e:
-                showerror(title=type(e).__name__,message=e)
+                showerror(title=type(e).__name__, message=e)
             finally:
                 main_setup()
-
 
         self.grid_columnconfigure(index=0, weight=1)
         self.grid_rowconfigure(index=0, weight=1)
@@ -508,7 +518,10 @@ class Midbar(CTkFrame):
         self.delete_btn.pack(pady=(15, 0), padx=5)
 
         self.back_to_setup_btn = CTkButton(
-            self.top_right, text="back to main meun", width=160, command=back_to_setup_comand
+            self.top_right,
+            text="back to main meun",
+            width=160,
+            command=back_to_setup_comand,
         )
         self.back_to_setup_btn.pack(pady=(15, 0), padx=5)
 
@@ -626,7 +639,7 @@ class Sidebar(CTkFrame):
         background_corner_colors: Tuple[str | Tuple[str, str]] | None = None,
         overwrite_preferred_drawing_method: str | None = None,
         **kwargs,
-    ):
+    ) -> None:
         super().__init__(
             master,
             width,
@@ -641,7 +654,7 @@ class Sidebar(CTkFrame):
             **kwargs,
         )
 
-        def combobox1_comand(choice):
+        def combobox1_comand(choice) -> None:
             set_appearance_mode(choice)
 
         self.widget_scaling_list = []
@@ -690,7 +703,7 @@ class Sidebar(CTkFrame):
 
 
 class Window(CTk):
-    def __init__(self, fg_color: str | Tuple[str, str] | None = None, **kwargs):
+    def __init__(self, fg_color: str | Tuple[str, str] | None = None, **kwargs) -> None:
         super().__init__(fg_color, **kwargs)
 
         self.geometry("1000x550")
@@ -715,7 +728,6 @@ class Window(CTk):
 ######################################################
 
 
-
 ######################################################
 """           userSetting scope startss            """
 ######################################################
@@ -724,7 +736,7 @@ class UserSetting_window(CTk):
         super().__init__(fg_color, **kwargs)
         self.geometry("400x300")
 
-        def theme_btn_commnad():
+        def theme_btn_commnad() -> None:
             if get_appearance_mode() == "Dark":
                 new_theme = "Light"
                 set_appearance_mode(new_theme)
@@ -732,40 +744,45 @@ class UserSetting_window(CTk):
                 new_theme = "Dark"
                 set_appearance_mode(new_theme)
 
-            df.at[0,"user theme"] = new_theme
+            df.at[0, "user theme"] = new_theme
             try:
                 df.to_csv("setting.csv", index=False)
             except Exception as e:
-                showerror(title=type(e).__name__,message=e)
+                showerror(title=type(e).__name__, message=e)
 
-        def back_to_setup_for_userSetting_command():
-            self.lastLabel.after(100,lambda: self.lastLabel.configure(text="wait"))
-            self.lastLabel.after(500,lambda: self.lastLabel.configure(text="wait."))
-            self.lastLabel.after(1000,lambda: self.lastLabel.configure(text="wait.."))
-            self.lastLabel.after(1500,lambda: self.lastLabel.configure(text="wait..."))
-            self.lastLabel.after(2000,close_userSetting_for_setup)
+        def back_to_setup_for_userSetting_command() -> None:
+            self.lastLabel.after(100, lambda: self.lastLabel.configure(text="wait"))
+            self.lastLabel.after(500, lambda: self.lastLabel.configure(text="wait."))
+            self.lastLabel.after(1000, lambda: self.lastLabel.configure(text="wait.."))
+            self.lastLabel.after(1500, lambda: self.lastLabel.configure(text="wait..."))
+            self.lastLabel.after(2000, close_userSetting_for_setup)
 
-        def close_userSetting_for_setup():
+        def close_userSetting_for_setup() -> None:
             try:
                 self.destroy()
             except Exception as e:
-                showerror(title=type(e).__name__,message=e)
+                showerror(title=type(e).__name__, message=e)
             finally:
                 main_setup()
 
+        self.theme_btn = CTkButton(
+            self, width=BTN_SIZE, text="Change theme", command=theme_btn_commnad
+        )
+        self.theme_btn.pack(pady=(5, 0))
 
-        self.theme_btn = CTkButton(self,width=BTN_SIZE,text="Change theme",command=theme_btn_commnad)
-        self.theme_btn.pack(pady=(5,0))
+        self.back_to_setup_for_userSetting = CTkButton(
+            self,
+            width=BTN_SIZE,
+            text="back to main menu",
+            command=back_to_setup_for_userSetting_command,
+        )
+        self.back_to_setup_for_userSetting.pack(pady=(5, 0))
 
-        self.back_to_setup_for_userSetting = CTkButton(self,width=BTN_SIZE,text="back to main menu",command=back_to_setup_for_userSetting_command)
-        self.back_to_setup_for_userSetting.pack(pady=(5,0))
-
-        self.lastLabel = CTkLabel(self,text="")
+        self.lastLabel = CTkLabel(self, text="")
         self.lastLabel.pack(pady=20)
 ######################################################
 """             userSetting scope ends             """
 ######################################################
-
 
 
 
@@ -774,17 +791,18 @@ class UserSetting_window(CTk):
 ######################################################
 BTN_SIZE = 160
 
+
 def main_setup() -> None:
     """
-    MAIN FUCTION 
+    MAIN FUCTION
     =============
     for setup page
     """
-    setup_window = CTk() # create setup window
+    setup_window = CTk()  # create setup window
     setup_window.title("main menu")
     setup_window.geometry(f"400x300+{0}+{0}")
 
-    def start_codeEditor_command() -> None: 
+    def start_codeEditor_command() -> None:
         """fuction for starting code editor"""
         start_codeEditor.pack_forget()
         start_NIMA_GUI.pack_forget()
@@ -796,17 +814,17 @@ def main_setup() -> None:
         coolLabel.after(2000, close_window_for_codeEditor)
 
     def close_window_for_codeEditor() -> None:
-        """start_codeEditor_command helper function """
+        """start_codeEditor_command helper function"""
         setup_window.destroy()
         main_codeEditor()
 
     def main_codeEditor() -> None:
-        """start_codeEditor_command helper function """
+        """start_codeEditor_command helper function"""
         try:
             window_codeEditor = MainWindow()
             window_codeEditor.mainloop()
         except Exception as e:
-            showerror(title=type(e).__name__,message=e)
+            showerror(title=type(e).__name__, message=e)
 
     def start_NIMA_GUI_command() -> None:
         """fuction for starting NIMA_GUI"""
@@ -820,20 +838,20 @@ def main_setup() -> None:
         coolLabel.after(2000, close_window_for_NIMA_GUI)
 
     def close_window_for_NIMA_GUI() -> None:
-        """start_NIMA_GUI_command helper function """
+        """start_NIMA_GUI_command helper function"""
         setup_window.destroy()
         main_NIMA_GUI()
 
     def main_NIMA_GUI() -> None:
-        """start_NIMA_GUI_command helper function """
+        """start_NIMA_GUI_command helper function"""
         try:
             window_NIMA_GUI = Window()
             window_NIMA_GUI.mainloop()
         except Exception as e:
-            showerror(title=type(e).__name__,message=e)
+            showerror(title=type(e).__name__, message=e)
 
     def start_userSetting_command() -> None:
-        """fuction for starting NIMA_GUI"""
+        """fuction for starting user setting"""
         start_codeEditor.pack_forget()
         start_NIMA_GUI.pack_forget()
         start_userSetting.pack_forget()
@@ -841,35 +859,50 @@ def main_setup() -> None:
         coolLabel.after(500, lambda: coolLabel.configure(text="Wait."))
         coolLabel.after(1000, lambda: coolLabel.configure(text="Wait.."))
         coolLabel.after(1500, lambda: coolLabel.configure(text="Wait..."))
-        coolLabel.after(2000,close_window_for_userSetting )
+        coolLabel.after(2000, close_window_for_userSetting)
 
     def close_window_for_userSetting() -> None:
-        """start_codeEditor_command helper function """
+        """start_userSetting_command helper function"""
         setup_window.destroy()
         main_userSetting()
 
     def main_userSetting() -> None:
-        """start_codeEditor_command helper function """
+        """start_userSetting_command helper function"""
         try:
             window_userSetting = UserSetting_window()
             window_userSetting.mainloop()
         except Exception as e:
-            showerror(title=type(e).__name__,message=e)
+            showerror(title=type(e).__name__, message=e)
 
-    
-    start_codeEditor = CTkButton(setup_window,text="start python code editor",width=BTN_SIZE,command=start_codeEditor_command)
-    start_codeEditor.pack(pady=(5,0))
+    start_codeEditor = CTkButton(
+        setup_window,
+        text="start python code editor",
+        width=BTN_SIZE,
+        command=start_codeEditor_command,
+    )
+    start_codeEditor.pack(pady=(5, 0))
 
-    start_NIMA_GUI = CTkButton(setup_window,text="start NIMA_GUI",width=BTN_SIZE,command=start_NIMA_GUI_command)
-    start_NIMA_GUI.pack(pady=(5,0))
+    start_NIMA_GUI = CTkButton(
+        setup_window,
+        text="start NIMA_GUI",
+        width=BTN_SIZE,
+        command=start_NIMA_GUI_command,
+    )
+    start_NIMA_GUI.pack(pady=(5, 0))
 
-    start_userSetting = CTkButton(setup_window,text="start user setting",width=BTN_SIZE,command=start_userSetting_command)
-    start_userSetting.pack(pady=(5,0))
+    start_userSetting = CTkButton(
+        setup_window,
+        text="start user setting",
+        width=BTN_SIZE,
+        command=start_userSetting_command,
+    )
+    start_userSetting.pack(pady=(5, 0))
 
-    coolLabel = CTkLabel(setup_window,text="",font=CTkFont(size=60))
+    coolLabel = CTkLabel(setup_window, text="", font=CTkFont(size=60))
     coolLabel.pack()
 
     setup_window.mainloop()
+
 
 if __name__ == "__main__":
     main_setup()
