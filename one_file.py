@@ -6,7 +6,16 @@ from sys import getsizeof
 import sys
 import io
 from Nimapydoc import YourPersonalVersion
-main__version__ = YourPersonalVersion(2,1,2)
+main__version__ = YourPersonalVersion(3,1,1)
+
+import pandas as pd
+
+df=pd.read_csv("setting.csv")
+print(df.head(2))
+try:
+    set_appearance_mode(df.at[0,"user theme"])
+except:
+    set_appearance_mode("Dark")
 
 ######################################################
 """             code editor scope starts           """
@@ -713,6 +722,59 @@ class Window(CTk):
 
 
 ######################################################
+"""           userSetting scope startss            """
+######################################################
+class UserSetting_window(CTk):
+    def __init__(self, fg_color: str | Tuple[str] | None = None, **kwargs):
+        super().__init__(fg_color, **kwargs)
+        self.geometry("400x300")
+
+        def theme_btn_commnad():
+            if get_appearance_mode() == "Dark":
+                new_theme = "Light"
+                set_appearance_mode(new_theme)
+            elif get_appearance_mode() == "Light":
+                new_theme = "Dark"
+                set_appearance_mode(new_theme)
+
+            df.at[0,"user theme"] = new_theme
+            try:
+                df.to_csv("setting.csv", index=False)
+            except Exception as e:
+                showerror(title=type(e).__name__,message=e)
+
+        def back_to_setup_for_userSetting_command():
+            self.lastLabel.after(100,lambda: self.lastLabel.configure(text="wait"))
+            self.lastLabel.after(500,lambda: self.lastLabel.configure(text="wait."))
+            self.lastLabel.after(1000,lambda: self.lastLabel.configure(text="wait.."))
+            self.lastLabel.after(1500,lambda: self.lastLabel.configure(text="wait..."))
+            self.lastLabel.after(2000,close_userSetting_for_setup)
+
+        def close_userSetting_for_setup():
+            try:
+                self.destroy()
+            except Exception as e:
+                showerror(title=type(e).__name__,message=e)
+            finally:
+                main_setup()
+
+
+        self.theme_btn = CTkButton(self,width=BTN_SIZE,text="Change theme",command=theme_btn_commnad)
+        self.theme_btn.pack(pady=(5,0))
+
+        self.back_to_setup_for_userSetting = CTkButton(self,width=BTN_SIZE,text="back to main menu",command=back_to_setup_for_userSetting_command)
+        self.back_to_setup_for_userSetting.pack(pady=(5,0))
+
+        self.lastLabel = CTkLabel(self,text="")
+        self.lastLabel.pack(pady=20)
+######################################################
+"""             userSetting scope ends             """
+######################################################
+
+
+
+
+######################################################
 """                setup scope starts              """
 ######################################################
 BTN_SIZE = 160
@@ -731,11 +793,12 @@ def main_setup() -> None:
         """fuction for starting code editor"""
         start_codeEditor.pack_forget()
         start_NIMA_GUI.pack_forget()
+        start_userSetting.pack_forget()
         coolLabel.after(100, lambda: coolLabel.configure(text="Wait"))
-        coolLabel.after(1100, lambda: coolLabel.configure(text="Wait."))
-        coolLabel.after(2100, lambda: coolLabel.configure(text="Wait.."))
-        coolLabel.after(3100, lambda: coolLabel.configure(text="Wait..."))
-        coolLabel.after(4000, close_window_for_codeEditor)
+        coolLabel.after(500, lambda: coolLabel.configure(text="Wait."))
+        coolLabel.after(1000, lambda: coolLabel.configure(text="Wait.."))
+        coolLabel.after(1500, lambda: coolLabel.configure(text="Wait..."))
+        coolLabel.after(2000, close_window_for_codeEditor)
 
     def close_window_for_codeEditor() -> None:
         """start_codeEditor_command helper function """
@@ -754,11 +817,12 @@ def main_setup() -> None:
         """fuction for starting NIMA_GUI"""
         start_codeEditor.pack_forget()
         start_NIMA_GUI.pack_forget()
+        start_userSetting.pack_forget()
         coolLabel.after(100, lambda: coolLabel.configure(text="Wait"))
-        coolLabel.after(1100, lambda: coolLabel.configure(text="Wait."))
-        coolLabel.after(2100, lambda: coolLabel.configure(text="Wait.."))
-        coolLabel.after(3100, lambda: coolLabel.configure(text="Wait..."))
-        coolLabel.after(4000, close_window_for_NIMA_GUI)
+        coolLabel.after(500, lambda: coolLabel.configure(text="Wait."))
+        coolLabel.after(1000, lambda: coolLabel.configure(text="Wait.."))
+        coolLabel.after(1500, lambda: coolLabel.configure(text="Wait..."))
+        coolLabel.after(2000, close_window_for_NIMA_GUI)
 
     def close_window_for_NIMA_GUI() -> None:
         """start_NIMA_GUI_command helper function """
@@ -772,12 +836,40 @@ def main_setup() -> None:
             window_NIMA_GUI.mainloop()
         except Exception as e:
             showerror(title=type(e).__name__,message=e)
+
+    def start_userSetting_command() -> None:
+        """fuction for starting NIMA_GUI"""
+        start_codeEditor.pack_forget()
+        start_NIMA_GUI.pack_forget()
+        start_userSetting.pack_forget()
+        coolLabel.after(100, lambda: coolLabel.configure(text="Wait"))
+        coolLabel.after(500, lambda: coolLabel.configure(text="Wait."))
+        coolLabel.after(1000, lambda: coolLabel.configure(text="Wait.."))
+        coolLabel.after(1500, lambda: coolLabel.configure(text="Wait..."))
+        coolLabel.after(2000,close_window_for_userSetting )
+
+    def close_window_for_userSetting() -> None:
+        """start_codeEditor_command helper function """
+        setup_window.destroy()
+        main_userSetting()
+
+    def main_userSetting() -> None:
+        """start_codeEditor_command helper function """
+        try:
+            window_userSetting = UserSetting_window()
+            window_userSetting.mainloop()
+        except Exception as e:
+            showerror(title=type(e).__name__,message=e)
+
     
     start_codeEditor = CTkButton(setup_window,text="start python code editor",width=BTN_SIZE,command=start_codeEditor_command)
     start_codeEditor.pack(pady=(5,0))
 
     start_NIMA_GUI = CTkButton(setup_window,text="start NIMA_GUI",width=BTN_SIZE,command=start_NIMA_GUI_command)
     start_NIMA_GUI.pack(pady=(5,0))
+
+    start_userSetting = CTkButton(setup_window,text="start user setting",width=BTN_SIZE,command=start_userSetting_command)
+    start_userSetting.pack(pady=(5,0))
 
     coolLabel = CTkLabel(setup_window,text="",font=CTkFont(size=60))
     coolLabel.pack()
